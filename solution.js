@@ -76,6 +76,9 @@
             elevator.checkDestinationQueue();
             console.log("newQueue:" + elevator.destinationQueue);
         }
+        var selectElevator = function (floorNum, direction) {
+            return(elevators[Math.floor(Math.random() * elevators.length)]);
+        }
         elevators.forEach(function (elevator) {
             elevator.on("floor_button_pressed", function(floorNum) {
                 addToDestinationQueue(elevator, floorNum);
@@ -83,12 +86,14 @@
         });
         floors.forEach(function (floor) {
             floor.on("up_button_pressed", function() {
-                addToDestinationQueue(elevators[0], floor.floorNum());
+                var elevator = selectElevator(floor.floorNum(), "up");
+                addToDestinationQueue(elevator, floor.floorNum());
             });
             floor.on("down_button_pressed", function() {
-                addToDestinationQueue(elevators[0], floor.floorNum());
+                var elevator = selectElevator(floor.floorNum(), "down");
+                addToDestinationQueue(elevator, floor.floorNum());
             });
         });
     },
-        update: function(dt, elevators, floors) { }
+    update: function(dt, elevators, floors) { }
 }
