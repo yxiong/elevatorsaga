@@ -1,40 +1,12 @@
 {
     init: function(elevators, floors) {
-        var firstIndexBiggerThan = function(array, value, start) {
-            if (typeof start === "undefined") {
-                start = 0;
-            }
-            for (var i = start; i < array.length; i++) {
-                if (array[i] > value) {
-                    return i;
-                }
-            }
-            return -1;
-        }
-        var firstIndexSmallerThan = function(array, value, start) {
-            if (typeof start === "undefined") {
-                start = 0;
-            }
-            for (var i = start; i < array.length; i++) {
-                if (array[i] < value) {
-                    return i;
-                }
-            }
-            return -1;
-        }
         var addToDestinationQueue = function(elevator, floorNum) {
-            console.log("================");
-            console.log("currentFloor: " + elevator.currentFloor());
-            console.log("currentQueue: " + elevator.destinationQueue);
-            console.log("destinationFloor: " + floorNum);
             if (elevator.destinationQueue.indexOf(floorNum) >= 0) {
-                console.log("newQueue:" + elevator.destinationQueue);
                 return;
             }
             if (elevator.destinationQueue.length === 0) {
                 elevator.destinationQueue.push(floorNum);
                 elevator.checkDestinationQueue();
-                console.log("newQueue:" + elevator.destinationQueue);
                 return;
             }
             var currentFloor = elevator.currentFloor();
@@ -44,28 +16,28 @@
                 if (elevator.destinationQueue.length === 1) {
                     elevator.destinationQueue.push(floorNum);
                     elevator.checkDestinationQueue();
-                    console.log("newQueue:" + elevator.destinationQueue);
                     return;
                 }
             }
             var direction = elevator.destinationQueue[nextIndex] - currentFloor;
+            var index;
             if (direction > 0) {
                 if (floorNum > currentFloor) {
-                    var index = firstIndexBiggerThan(elevator.destinationQueue, floorNum, nextIndex);
+                    index = _.findIndex(elevator.destinationQueue, function (f) { return f > floorNum; });
                     if (index < 0) {
-                        index = firstIndexSmallerThan(elevator.destinationQueue, currentFloor, nextIndex);
+                        index = _.findIndex(elevator.destinationQueue, function (f) { return f < currentFloor; });
                     }
                 } else {
-                    var index = firstIndexSmallerThan(elevator.destinationQueue, floorNum, nextIndex);
+                    index = _.findIndex(elevator.destinationQueue, function (f) { return f < floorNum; });
                 }
             } else {
                 if (floorNum < currentFloor) {
-                    var index = firstIndexSmallerThan(elevator.destinationQueue, floorNum, nextIndex);
+                    index = _.findIndex(elevator.destinationQueue, function (f) { return f < floorNum; });
                     if (index < 0) {
-                        index = firstIndexBiggerThan(elevator.destinationQueue, currentFloor, nextIndex);
+                        index = _.findIndex(elevator.destinationQueue, function (f) { return f > currentFloor; });
                     }
                 } else {
-                    var index = firstIndexBiggerThan(elevator.destinationQueue, floorNum, nextIndex);
+                    index = _.findIndex(elevator.destinationQueue, function (f) { return f > floorNum; });
                 }
             }
             if (index >= 0) {
@@ -74,7 +46,6 @@
                 elevator.destinationQueue.push(floorNum);
             }
             elevator.checkDestinationQueue();
-            console.log("newQueue:" + elevator.destinationQueue);
         }
         var selectElevator = function (floorNum, direction) {
             return(elevators[Math.floor(Math.random() * elevators.length)]);
