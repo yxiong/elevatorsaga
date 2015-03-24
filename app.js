@@ -41,7 +41,12 @@ var createEditor = function() {
     });
 
     var reset = function() {
-        cm.setValue($("#default-elev-implementation").text().trim());
+        $.ajax({
+            url: "solution.js",
+            dataType: "text",
+            success: function(response) { cm.setValue(response.trim()); },
+            async: false
+        });
     };
     var saveCode = function() {
         localStorage.setItem(lsKey, cm.getValue());
