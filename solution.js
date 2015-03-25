@@ -1,6 +1,25 @@
 {
     init: function(elevators, floors) {
         elevators.forEach(function (elevator) {
+            /* Get the direction the elevator currently moves towards. Returns:
+             *    a positive number if the elevator is moving upwards;
+             *    a negative number if the elevator is moving downwards;
+             *    zero if the elevator is not moving.
+             */
+            elevator.getDirection = function() {
+                if (this.destinationQueue.length === 0) {
+                    return 0;
+                }
+                var currentFloor = this.currentFloor();
+                var nextFloor = this.destinationQueue[0];
+                if (nextFloor === currentFloor) {
+                    if (this.destinationQueue.length === 1) {
+                        return 0;
+                    }
+                    nextFloor = this.destinationQueue[1];
+                }
+                return nextFloor - currentFloor;
+            }
             /* Add the new `floorNum` to the destination queue in a sensible manner:
              *   if the `floorNum` is already in the queue, skip;
              *   if the `floorNum` is along the way, make a stop when passing it;
@@ -10,20 +29,12 @@
                 if (this.destinationQueue.indexOf(floorNum) >= 0) {
                     return;
                 }
-                if (this.destinationQueue.length === 0) {
+                var direction = this.getDirection();
+                if (direction === 0) {
                     this.goToFloor(floorNum);
                     return;
                 }
                 var currentFloor = this.currentFloor();
-                var nextIndex = 0;
-                if (this.destinationQueue[0] === currentFloor) {
-                    nextIndex = 1;
-                    if (this.destinationQueue.length === 1) {
-                        this.goToFloor(floorNum);
-                        return;
-                    }
-                }
-                var direction = this.destinationQueue[nextIndex] - currentFloor;
                 var index;
                 if (direction > 0) {
                     if (floorNum > currentFloor) {
@@ -72,3 +83,14 @@
     },
     update: function(dt, elevators, floors) { }
 }
+
+/**
+ * TODO:
+ *   Better logic for selecting an elevator when a floor request is received.
+ *   Add goingUpIndicator and goingDownIndicator.
+ */
+
+// Local Variables:
+// js-indent-level: 4
+// indent-tabs-mode: nil
+// End:
